@@ -1,10 +1,12 @@
 package com.z.nativejpablocking.domain;
 
 import com.z.nativejpablocking.dto.CreatePersonRequest;
+import com.z.nativejpablocking.dto.UpdatePersonRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -15,6 +17,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @Entity
 @Builder
+@DynamicUpdate
 public class Person {
     private final static String PERSON_SEQUENCE_NAME = "PERSON_SEQUENCE";
 

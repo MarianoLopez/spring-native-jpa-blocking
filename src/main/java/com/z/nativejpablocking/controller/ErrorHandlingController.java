@@ -9,6 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,13 +30,35 @@ public class ErrorHandlingController {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ErrorResponse> constraintHandler(MethodArgumentNotValidException exception) {
+    ResponseEntity<ErrorResponse> argumentNotValidHandler(MethodArgumentNotValidException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ErrorResponse.builder()
                         .message("MethodArgumentNotValidException")
                         .payload(groupByError(exception))
                         .build()
         );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    ResponseEntity<ErrorResponse> constraintHandler(ConstraintViolationException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ErrorResponse.builder()
+                        .message("ConstraintViolationException")
+                        .payload(groupByError(exception))
+                        .build()
+        );
+    }
+
+    private Map<String, List<FieldError>> groupByError(ConstraintViolationException exception) {
+        return exception
+                .getConstraintViolations()
+                .stream()
+                .map(this::toFieldError)
+                .collect(Collectors.groupingBy(FieldError::getField));
+    }
+
+    private FieldError toFieldError(ConstraintViolation<?> it) {
+        return new FieldError(it.getRootBeanClass().getSimpleName(), it.getPropertyPath().toString(), it.getMessage());
     }
 
     private Map<String, List<FieldError>> groupByError(MethodArgumentNotValidException exception) {
