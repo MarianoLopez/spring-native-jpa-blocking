@@ -49,7 +49,7 @@ public class Person extends JPAAuditor {
     })
     private City city;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}) //oder does matter
     @JoinTable(
             name = "person_job",
             joinColumns = @JoinColumn(name = "person_id"),

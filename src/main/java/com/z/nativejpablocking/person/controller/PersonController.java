@@ -10,7 +10,6 @@ import com.z.nativejpablocking.person.service.PersonManagementService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +54,7 @@ public class PersonController implements PersonManagementController {
         return ResponseEntity.accepted().body(this.personManagementService.update(updatePersonRequest));
     }
 
-    private void validateUpdatePersonGroup(UpdatePersonRequest updatePersonRequest) throws ConstraintViolationException{
+    private void validateUpdatePersonGroup(UpdatePersonRequest updatePersonRequest) throws ConstraintViolationException {
         Set<ConstraintViolation<UpdatePersonRequest>> constraintViolations = validator.validate(updatePersonRequest, UpdatePersonGroup.class);
         if (!constraintViolations.isEmpty()) {
             throw new ConstraintViolationException(constraintViolations);

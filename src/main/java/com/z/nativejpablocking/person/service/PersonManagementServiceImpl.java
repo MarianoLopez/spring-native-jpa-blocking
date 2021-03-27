@@ -1,5 +1,6 @@
 package com.z.nativejpablocking.person.service;
 
+import com.z.nativejpablocking.person.dao.JobDAO;
 import com.z.nativejpablocking.person.dao.PersonDAO;
 import com.z.nativejpablocking.person.domain.Job;
 import com.z.nativejpablocking.person.domain.Person;
@@ -7,7 +8,11 @@ import com.z.nativejpablocking.person.dto.CreatePersonRequest;
 import com.z.nativejpablocking.person.dto.GetPersonRequest;
 import com.z.nativejpablocking.person.dto.PersonResponse;
 import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
+import com.z.nativejpablocking.person.dto.event.DeletePersonEvent;
+import com.z.nativejpablocking.person.dto.event.CreatePersonEvent;
+import com.z.nativejpablocking.person.dto.event.UpdatePersonEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,12 +28,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PersonManagementServiceImpl implements PersonManagementService {
     private final PersonDAO personDAO;
+    private final JobDAO jobDAO;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     @Override
     public PersonResponse save(CreatePersonRequest createPersonRequest) {
         var person = Person.toPerson(createPersonRequest);
         this.personDAO.save(person);
+        this.applicationEventPublisher.publishEvent(new CreatePersonEvent(this, person));
         return PersonResponse.from(person);
     }
 
@@ -57,6 +65,7 @@ public class PersonManagementServiceImpl implements PersonManagementService {
         this.merge(person, updatePersonRequest);
         person.setLastModifiedDate(LocalDateTime.now());
         this.personDAO.save(person);
+        this.applicationEventPublisher.publishEvent(new UpdatePersonEvent(this, person));
         return PersonResponse.from(person);
     }
 
@@ -66,6 +75,7 @@ public class PersonManagementServiceImpl implements PersonManagementService {
         var person = findByIdOrElseThrow(id);
         person.setEnabled(false);
         this.personDAO.save(person);
+        this.applicationEventPublisher.publishEvent(new DeletePersonEvent(this, person));
         return PersonResponse.from(person);
     }
 
