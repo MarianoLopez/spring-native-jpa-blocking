@@ -1,8 +1,8 @@
-package com.z.nativejpablocking.service;
+package com.z.nativejpablocking.person.service;
 
-import com.z.nativejpablocking.dto.CreatePersonRequest;
-import com.z.nativejpablocking.dto.PersonResponse;
-import com.z.nativejpablocking.dto.UpdatePersonRequest;
+import com.z.nativejpablocking.person.dto.CreatePersonRequest;
+import com.z.nativejpablocking.person.dto.PersonResponse;
+import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,4 +15,5 @@ public interface PersonManagementService {
     Optional<PersonResponse> findById(Long id);
     Page<PersonResponse> findByLastNameContaining(String lastName, Pageable pageable);
     PersonResponse update(UpdatePersonRequest updatePersonRequest) throws EntityNotFoundException;
+    PersonResponse deleteById(Long id) throws EntityNotFoundException;
 }

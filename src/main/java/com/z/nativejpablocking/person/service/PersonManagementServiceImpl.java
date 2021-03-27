@@ -1,10 +1,10 @@
-package com.z.nativejpablocking.service;
+package com.z.nativejpablocking.person.service;
 
-import com.z.nativejpablocking.dao.PersonDAO;
-import com.z.nativejpablocking.domain.Person;
-import com.z.nativejpablocking.dto.CreatePersonRequest;
-import com.z.nativejpablocking.dto.PersonResponse;
-import com.z.nativejpablocking.dto.UpdatePersonRequest;
+import com.z.nativejpablocking.person.dao.PersonDAO;
+import com.z.nativejpablocking.person.domain.Person;
+import com.z.nativejpablocking.person.dto.CreatePersonRequest;
+import com.z.nativejpablocking.person.dto.PersonResponse;
+import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -46,13 +47,27 @@ public class PersonManagementServiceImpl implements PersonManagementService {
     @Transactional
     @Override
     public PersonResponse update(UpdatePersonRequest updatePersonRequest) throws EntityNotFoundException {
-        var person = this.personDAO
-                .findById(updatePersonRequest.getId())
-                .orElseThrow(() -> this.entityNotFoundException(updatePersonRequest.getId()));
+        var person= findByIdOrElseThrow(updatePersonRequest.getId());
 
         this.mergeIfNotNull(person, updatePersonRequest);
+        person.setLastModifiedDate(LocalDateTime.now());
         this.personDAO.save(person);
         return PersonResponse.from(person);
+    }
+
+    @Transactional
+    @Override
+    public PersonResponse deleteById(Long id) throws EntityNotFoundException{
+        var person = findByIdOrElseThrow(id);
+        person.setEnabled(false);
+        this.personDAO.save(person);
+        return PersonResponse.from(person);
+    }
+
+    private Person findByIdOrElseThrow(Long id) throws EntityNotFoundException {
+        return this.personDAO
+                .findById(id)
+                .orElseThrow(() -> this.entityNotFoundException(id));
     }
 
     private void mergeIfNotNull(Person person, UpdatePersonRequest updatePersonRequest) {

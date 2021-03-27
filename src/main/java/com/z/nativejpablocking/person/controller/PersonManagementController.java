@@ -1,8 +1,8 @@
-package com.z.nativejpablocking.controller;
+package com.z.nativejpablocking.person.controller;
 
-import com.z.nativejpablocking.dto.CreatePersonRequest;
-import com.z.nativejpablocking.dto.PersonResponse;
-import com.z.nativejpablocking.dto.UpdatePersonRequest;
+import com.z.nativejpablocking.person.dto.CreatePersonRequest;
+import com.z.nativejpablocking.person.dto.PersonResponse;
+import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

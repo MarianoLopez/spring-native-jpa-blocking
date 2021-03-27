@@ -1,6 +1,6 @@
-package com.z.nativejpablocking.dao;
+package com.z.nativejpablocking.person.dao;
 
-import com.z.nativejpablocking.domain.Person;
+import com.z.nativejpablocking.person.domain.Person;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;

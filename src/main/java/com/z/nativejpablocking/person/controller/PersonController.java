@@ -1,7 +1,9 @@
-package com.z.nativejpablocking.controller;
+package com.z.nativejpablocking.person.controller;
 
-import com.z.nativejpablocking.dto.*;
-import com.z.nativejpablocking.service.PersonManagementService;
+import com.z.nativejpablocking.person.dto.*;
+import com.z.nativejpablocking.person.dto.validation.PersonIdGroup;
+import com.z.nativejpablocking.person.dto.validation.UpdatePersonGroup;
+import com.z.nativejpablocking.person.service.PersonManagementService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.z.nativejpablocking.controller.PersonController.BASE_URL;
+import static com.z.nativejpablocking.person.controller.PersonController.BASE_URL;
 
 @RestController
 @RequestMapping(BASE_URL)
@@ -47,7 +49,7 @@ public class PersonController implements PersonManagementController {
     @PutMapping
     public ResponseEntity<PersonResponse> update(@RequestBody @Validated(PersonIdGroup.class) UpdatePersonRequest updatePersonRequest) throws EntityNotFoundException {
         validateUpdatePersonGroup(updatePersonRequest);
-        return ResponseEntity.ok(this.personManagementService.update(updatePersonRequest));
+        return ResponseEntity.accepted().body(this.personManagementService.update(updatePersonRequest));
     }
 
     private void validateUpdatePersonGroup(UpdatePersonRequest updatePersonRequest) throws ConstraintViolationException{
@@ -58,8 +60,9 @@ public class PersonController implements PersonManagementController {
     }
 
     @Override
-    public ResponseEntity<PersonResponse> deleteById(Long id) {
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PersonResponse> deleteById(@PathVariable Long id) {
+        return ResponseEntity.accepted().body(this.personManagementService.deleteById(id));
     }
 
     @Override

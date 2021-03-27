@@ -1,6 +1,7 @@
-package com.z.nativejpablocking.controller;
+package com.z.nativejpablocking.error.controller;
 
-import com.z.nativejpablocking.dto.ErrorResponse;
+import com.z.nativejpablocking.error.dto.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
@@ -16,21 +18,24 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
+@Slf4j
 public class ErrorHandlingController {
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErrorResponse> exceptionHandler(Exception exception) {
+        logError(exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.from(exception));
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    ResponseEntity<ErrorResponse> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception) {
+    @ExceptionHandler({HttpMessageNotReadableException.class, EntityNotFoundException.class})
+    ResponseEntity<ErrorResponse> httpMessageNotReadableExceptionHandler(Exception exception) {
+        logError(exception);
         return ResponseEntity.badRequest().body(ErrorResponse.from(exception));
     }
 
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ErrorResponse> argumentNotValidHandler(MethodArgumentNotValidException exception) {
+        logError(exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ErrorResponse.builder()
                         .message("MethodArgumentNotValidException")
@@ -41,6 +46,7 @@ public class ErrorHandlingController {
 
     @ExceptionHandler(ConstraintViolationException.class)
     ResponseEntity<ErrorResponse> constraintHandler(ConstraintViolationException exception) {
+        logError(exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ErrorResponse.builder()
                         .message("ConstraintViolationException")
@@ -66,5 +72,10 @@ public class ErrorHandlingController {
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.groupingBy(FieldError::getField));
+    }
+
+    private void logError(Throwable throwable) {
+        log.error(throwable.getLocalizedMessage());
+        log.error(this.getClass().getSimpleName(), throwable);
     }
 }

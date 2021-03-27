@@ -1,5 +1,7 @@
-package com.z.nativejpablocking.dto;
+package com.z.nativejpablocking.person.dto;
 
+import com.z.nativejpablocking.person.dto.validation.PersonIdGroup;
+import com.z.nativejpablocking.person.dto.validation.UpdatePersonGroup;
 import com.z.nativejpablocking.utils.validator.NotEmptyIfNotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

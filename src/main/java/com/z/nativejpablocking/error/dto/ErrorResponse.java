@@ -1,4 +1,4 @@
-package com.z.nativejpablocking.dto;
+package com.z.nativejpablocking.error.dto;
 
 import lombok.Builder;
 import lombok.Data;
