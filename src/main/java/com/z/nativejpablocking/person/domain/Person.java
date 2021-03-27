@@ -16,26 +16,44 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Builder
 @DynamicUpdate
+@NamedEntityGraph(name = Person.PERSON_FULL_GRAPH, attributeNodes = {
+        @NamedAttributeNode(value = "city", subgraph = "city")
+}, subgraphs = {
+        @NamedSubgraph(name = "city", attributeNodes = {
+                @NamedAttributeNode("country")
+        })
+})
 public class Person extends JPAAuditor {
+    public final static String PERSON_FULL_GRAPH = "PERSON_FULL_GRAPH";
     private final static String PERSON_SEQUENCE_NAME = "PERSON_SEQUENCE";
 
     @Id
     @SequenceGenerator(name = PERSON_SEQUENCE_NAME, sequenceName = PERSON_SEQUENCE_NAME, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = PERSON_SEQUENCE_NAME)
     @EqualsAndHashCode.Include
-    private long id;
+    private Long id;
     @NotEmpty
     private String firstName;
     @NotEmpty
     private String lastName;
     @NotNull
     private Boolean enabled;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="country_iso_code", referencedColumnName="country_iso_code"),
+            @JoinColumn(name="city_name", referencedColumnName="name")
+    })
+    private City city;
 
     public static Person toPerson(CreatePersonRequest createPersonRequest) {
+        var city = new City();
+        city.setId(new CityId(createPersonRequest.getCityName(), createPersonRequest.getCountryISOCode()));
+
         return Person.builder()
                 .firstName(createPersonRequest.getFirstName())
                 .lastName(createPersonRequest.getLastName())
                 .enabled(true)
+                .city(city)
                 .build();
     }
 }

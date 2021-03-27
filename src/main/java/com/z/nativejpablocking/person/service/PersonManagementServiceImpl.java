@@ -3,6 +3,7 @@ package com.z.nativejpablocking.person.service;
 import com.z.nativejpablocking.person.dao.PersonDAO;
 import com.z.nativejpablocking.person.domain.Person;
 import com.z.nativejpablocking.person.dto.CreatePersonRequest;
+import com.z.nativejpablocking.person.dto.GetPersonRequest;
 import com.z.nativejpablocking.person.dto.PersonResponse;
 import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +31,20 @@ public class PersonManagementServiceImpl implements PersonManagementService {
     }
 
     @Override
-    public Page<PersonResponse> findAll(Pageable pageable) {
-        return this.personDAO.findAll(pageable).map(PersonResponse::from);
+    public Page<PersonResponse> findAll(Pageable pageable, GetPersonRequest getPersonRequest) {
+        Page<Person> result;
+
+        if (getPersonRequest.getLastName() != null) {
+            result = this.personDAO.findByLastNameContaining(getPersonRequest.getLastName(), pageable);
+        } else {
+            result = this.personDAO.findAll(pageable);
+        }
+        return result.map(PersonResponse::from);
     }
 
     @Override
     public Optional<PersonResponse> findById(Long id) {
         return this.personDAO.findById(id).map(PersonResponse::from);
-    }
-
-    @Override
-    public Page<PersonResponse> findByLastNameContaining(String lastName, Pageable pageable) {
-        return this.personDAO.findByLastNameContaining(lastName, pageable).map(PersonResponse::from);
     }
 
     @Transactional

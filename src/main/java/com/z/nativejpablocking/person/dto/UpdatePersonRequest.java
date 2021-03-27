@@ -26,4 +26,12 @@ public class UpdatePersonRequest {
     @ApiModelProperty(example = "Doe")
     @NotEmptyIfNotNull(message = "lastName shouldn't be empty if is present", groups = UpdatePersonGroup.class)
     private final String lastName;
+
+    @ApiModelProperty(example = "AR")
+    @NotEmptyIfNotNull(message = "countryISOCode shouldn't be empty if is present", groups = UpdatePersonGroup.class)
+    private final String countryISOCode;
+
+    @ApiModelProperty(example = "Corrientes")
+    @NotEmptyIfNotNull(message = "cityName shouldn't be empty if is present", groups = UpdatePersonGroup.class)
+    private final String cityName;
 }

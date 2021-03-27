@@ -16,4 +16,12 @@ public class CreatePersonRequest {
     @ApiModelProperty(example = "Doe")
     @NotEmpty
     private final String lastName;
+
+    @ApiModelProperty(example = "AR")
+    @NotEmpty
+    private final String countryISOCode;
+
+    @ApiModelProperty(example = "Corrientes")
+    @NotEmpty
+    private final String cityName;
 }

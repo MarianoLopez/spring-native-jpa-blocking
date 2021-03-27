@@ -21,6 +21,11 @@ public class PersonResponse {
     private final String lastName;
     @ApiModelProperty(example = "true")
     private final Boolean enabled;
+    @ApiModelProperty(example = "AR")
+    private final String countryISOCode;
+    @ApiModelProperty(example = "Corrientes")
+    private final String cityName;
+
     @ApiModelProperty(example = "2021-03-26T22:31:41.062922")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = defaultDateTimeFormat)
     private final LocalDateTime lastModifiedDate;
@@ -34,6 +39,8 @@ public class PersonResponse {
                 person.getFirstName(),
                 person.getLastName(),
                 person.getEnabled(),
+                person.getCity().getId().getCountry_iso_code(),
+                person.getCity().getId().getName(),
                 person.getLastModifiedDate(),
                 person.getCreatedDate());
     }

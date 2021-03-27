@@ -1,12 +1,16 @@
 package com.z.nativejpablocking.person.controller;
 
-import com.z.nativejpablocking.person.dto.*;
+import com.z.nativejpablocking.person.dto.CreatePersonRequest;
+import com.z.nativejpablocking.person.dto.GetPersonRequest;
+import com.z.nativejpablocking.person.dto.PersonResponse;
+import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
 import com.z.nativejpablocking.person.dto.validation.PersonIdGroup;
 import com.z.nativejpablocking.person.dto.validation.UpdatePersonGroup;
 import com.z.nativejpablocking.person.service.PersonManagementService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +20,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.net.URI;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.z.nativejpablocking.person.controller.PersonController.BASE_URL;
@@ -67,26 +70,16 @@ public class PersonController implements PersonManagementController {
 
     @Override
     @GetMapping
-    public ResponseEntity<Page<PersonResponse>> findAll(Pageable pageable) {
-        return ResponseEntity.ok(this.personManagementService.findAll(pageable));
+    public ResponseEntity<Page<PersonResponse>> findAll(Pageable pageable, GetPersonRequest getPersonRequest) {
+        return ResponseEntity.ok(this.personManagementService.findAll(pageable, getPersonRequest));
     }
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<PersonResponse>> findById(@PathVariable Long id) {
-        var response = this.personManagementService.findById(id);
-
-        if (response.isPresent()) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.noContent().build();
-        }
-    }
-
-    @Override
-    @GetMapping(params = {"lastName"})
-    public ResponseEntity<Page<PersonResponse>> findByLastNameContaining(
-            @RequestParam("lastName") String lastName, Pageable pageable) {
-        return ResponseEntity.ok(this.personManagementService.findByLastNameContaining(lastName, pageable));
+    public ResponseEntity<PersonResponse> findById(@PathVariable Long id) {
+        return this.personManagementService
+                .findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 }
