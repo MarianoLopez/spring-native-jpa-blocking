@@ -3,16 +3,18 @@ package com.z.nativejpablocking.person.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.z.nativejpablocking.person.domain.Person;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@Data
+import static com.z.nativejpablocking.utils.DateUtils.DEFAULT_DATE_TIME_FORMAT;
+
+@RequiredArgsConstructor
+@Getter
 public class PersonResponse {
-    private static final String defaultDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
-
     @ApiModelProperty(example = "999")
     private final Long id;
     @ApiModelProperty(example = "John")
@@ -25,12 +27,13 @@ public class PersonResponse {
     private final String countryISOCode;
     @ApiModelProperty(example = "Corrientes")
     private final String cityName;
+    private final Set<JobResponse> jobs;
 
     @ApiModelProperty(example = "2021-03-26T22:31:41.062922")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = defaultDateTimeFormat)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_TIME_FORMAT)
     private final LocalDateTime lastModifiedDate;
     @ApiModelProperty(example = "2021-03-26T22:31:41.062922")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = defaultDateTimeFormat)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_TIME_FORMAT)
     private final LocalDateTime createdDate;
 
     public static PersonResponse from(Person person) {
@@ -41,6 +44,7 @@ public class PersonResponse {
                 person.getEnabled(),
                 person.getCity().getId().getCountry_iso_code(),
                 person.getCity().getId().getName(),
+                person.getJobs().stream().map(JobResponse::from).collect(Collectors.toSet()),
                 person.getLastModifiedDate(),
                 person.getCreatedDate());
     }

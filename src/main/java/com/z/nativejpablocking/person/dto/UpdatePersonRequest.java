@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Data
@@ -34,4 +35,6 @@ public class UpdatePersonRequest {
     @ApiModelProperty(example = "Corrientes")
     @NotEmptyIfNotNull(message = "cityName shouldn't be empty if is present", groups = UpdatePersonGroup.class)
     private final String cityName;
+
+    private final Set<JobRequest> jobs;
 }

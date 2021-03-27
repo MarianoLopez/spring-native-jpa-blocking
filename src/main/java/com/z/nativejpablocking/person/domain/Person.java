@@ -8,6 +8,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @AllArgsConstructor
@@ -17,7 +19,8 @@ import javax.validation.constraints.NotNull;
 @Builder
 @DynamicUpdate
 @NamedEntityGraph(name = Person.PERSON_FULL_GRAPH, attributeNodes = {
-        @NamedAttributeNode(value = "city", subgraph = "city")
+        @NamedAttributeNode(value = "city", subgraph = "city"),
+        @NamedAttributeNode(value = "jobs")
 }, subgraphs = {
         @NamedSubgraph(name = "city", attributeNodes = {
                 @NamedAttributeNode("country")
@@ -38,12 +41,20 @@ public class Person extends JPAAuditor {
     private String lastName;
     @NotNull
     private Boolean enabled;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name="country_iso_code", referencedColumnName="country_iso_code"),
             @JoinColumn(name="city_name", referencedColumnName="name")
     })
     private City city;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "person_job",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "job_name"))
+    private Set<Job> jobs;
 
     public static Person toPerson(CreatePersonRequest createPersonRequest) {
         var city = new City();
@@ -54,6 +65,7 @@ public class Person extends JPAAuditor {
                 .lastName(createPersonRequest.getLastName())
                 .enabled(true)
                 .city(city)
+                .jobs(createPersonRequest.getJobs().stream().map(Job::toJob).collect(Collectors.toSet()))
                 .build();
     }
 }

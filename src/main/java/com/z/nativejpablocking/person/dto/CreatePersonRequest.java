@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Data
@@ -24,4 +25,6 @@ public class CreatePersonRequest {
     @ApiModelProperty(example = "Corrientes")
     @NotEmpty
     private final String cityName;
+
+    private final Set<JobRequest> jobs;
 }

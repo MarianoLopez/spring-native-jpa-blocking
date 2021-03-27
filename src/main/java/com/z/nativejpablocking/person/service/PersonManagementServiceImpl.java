@@ -1,6 +1,7 @@
 package com.z.nativejpablocking.person.service;
 
 import com.z.nativejpablocking.person.dao.PersonDAO;
+import com.z.nativejpablocking.person.domain.Job;
 import com.z.nativejpablocking.person.domain.Person;
 import com.z.nativejpablocking.person.dto.CreatePersonRequest;
 import com.z.nativejpablocking.person.dto.GetPersonRequest;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,7 +54,7 @@ public class PersonManagementServiceImpl implements PersonManagementService {
     public PersonResponse update(UpdatePersonRequest updatePersonRequest) throws EntityNotFoundException {
         var person= findByIdOrElseThrow(updatePersonRequest.getId());
 
-        this.mergeIfNotNull(person, updatePersonRequest);
+        this.merge(person, updatePersonRequest);
         person.setLastModifiedDate(LocalDateTime.now());
         this.personDAO.save(person);
         return PersonResponse.from(person);
@@ -73,7 +75,7 @@ public class PersonManagementServiceImpl implements PersonManagementService {
                 .orElseThrow(() -> this.entityNotFoundException(id));
     }
 
-    private void mergeIfNotNull(Person person, UpdatePersonRequest updatePersonRequest) {
+    private void merge(Person person, UpdatePersonRequest updatePersonRequest) {
         if (updatePersonRequest.getFirstName() != null) {
             person.setFirstName(updatePersonRequest.getFirstName());
         }
@@ -81,6 +83,8 @@ public class PersonManagementServiceImpl implements PersonManagementService {
         if (updatePersonRequest.getLastName() != null) {
             person.setLastName(updatePersonRequest.getLastName());
         }
+
+        person.setJobs(updatePersonRequest.getJobs().stream().map(Job::toJob).collect(Collectors.toSet()));
     }
 
     private EntityNotFoundException entityNotFoundException(Long id) {
