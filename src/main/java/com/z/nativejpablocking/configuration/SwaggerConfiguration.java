@@ -3,6 +3,7 @@ package com.z.nativejpablocking.configuration;
 import com.z.nativejpablocking.NativeJpaBlockingApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -16,10 +17,12 @@ public class SwaggerConfiguration {
     @Bean
     Docket docketSwagger() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .forCodeGeneration(true)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(NativeJpaBlockingApplication.class.getPackage().getName()))
                 .paths(PathSelectors.any())
                 .build()
-                .pathMapping("/");
+                .pathMapping("/")
+                .genericModelSubstitutes(ResponseEntity.class);
     }
 }

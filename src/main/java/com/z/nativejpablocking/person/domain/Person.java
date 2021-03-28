@@ -1,5 +1,7 @@
 package com.z.nativejpablocking.person.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.z.nativejpablocking.job.domain.Job;
 import com.z.nativejpablocking.person.dto.CreatePersonRequest;
 import com.z.nativejpablocking.utils.jpa.JPAAuditor;
 import lombok.*;
@@ -16,7 +18,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Data
 @Entity
-@Builder
 @DynamicUpdate
 @NamedEntityGraph(name = Person.PERSON_FULL_GRAPH, attributeNodes = {
         @NamedAttributeNode(value = "city", subgraph = "city"),
@@ -49,23 +50,24 @@ public class Person extends JPAAuditor {
     })
     private City city;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}) //oder does matter
+    @JsonManagedReference // to avoid circular references
+    @ManyToMany
     @JoinTable(
             name = "person_job",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "job_name"))
     private Set<Job> jobs;
 
-    public static Person toPerson(CreatePersonRequest createPersonRequest) {
-        var city = new City();
-        city.setId(new CityId(createPersonRequest.getCityName(), createPersonRequest.getCountryISOCode()));
 
-        return Person.builder()
-                .firstName(createPersonRequest.getFirstName())
-                .lastName(createPersonRequest.getLastName())
-                .enabled(true)
-                .city(city)
-                .jobs(createPersonRequest.getJobs().stream().map(Job::toJob).collect(Collectors.toSet()))
-                .build();
+    public static Person toPerson(CreatePersonRequest createPersonRequest) {
+        var country = new Country();
+        country.setISOCode(createPersonRequest.getCountryISOCode());
+        var city = new City();
+        city.setId(new CityId(createPersonRequest.getCityName(), country.getISOCode()));
+        city.setCountry(country);
+
+        return new Person(
+                null, createPersonRequest.getFirstName(), createPersonRequest.getLastName(),
+                true, city, createPersonRequest.getJobs().stream().map(Job::toJob).collect(Collectors.toSet()));
     }
 }

@@ -1,6 +1,6 @@
-package com.z.nativejpablocking.person.dao;
+package com.z.nativejpablocking.job.dao;
 
-import com.z.nativejpablocking.person.domain.Job;
+import com.z.nativejpablocking.job.domain.Job;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

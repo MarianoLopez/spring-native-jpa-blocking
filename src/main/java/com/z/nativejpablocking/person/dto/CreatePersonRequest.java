@@ -1,5 +1,6 @@
 package com.z.nativejpablocking.person.dto;
 
+import com.z.nativejpablocking.job.dto.JobRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

@@ -14,5 +14,6 @@ import java.io.Serializable;
 @Data
 public class CityId implements Serializable {
     private String name;
-    private String country_iso_code;
+    @Column(name = "country_iso_code", table = "city")
+    private String countryIsoCode;
 }

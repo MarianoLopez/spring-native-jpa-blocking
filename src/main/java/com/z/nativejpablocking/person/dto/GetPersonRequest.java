@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class GetPersonRequest {
-    @ApiParam(value = "Pageable page size (do not use pageSize)")
-    private Integer size;
-
     @ApiParam(value = "Optional lastName filter")
     private String lastName;
 }

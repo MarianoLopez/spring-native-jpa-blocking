@@ -1,6 +1,7 @@
 package com.z.nativejpablocking.person.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.z.nativejpablocking.job.dto.JobResponse;
 import com.z.nativejpablocking.person.domain.Person;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.z.nativejpablocking.utils.DateUtils.DEFAULT_DATE_TIME_FORMAT;
+import static com.z.nativejpablocking.utils.date.DateUtils.DEFAULT_DATE_TIME_FORMAT;
 
 @RequiredArgsConstructor
 @Getter
@@ -42,7 +43,7 @@ public class PersonResponse {
                 person.getFirstName(),
                 person.getLastName(),
                 person.getEnabled(),
-                person.getCity().getId().getCountry_iso_code(),
+                person.getCity().getCountry().getISOCode(),
                 person.getCity().getId().getName(),
                 person.getJobs().stream().map(JobResponse::from).collect(Collectors.toSet()),
                 person.getLastModifiedDate(),

@@ -13,29 +13,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
+import java.util.concurrent.Flow;
 
 import static com.z.nativejpablocking.person.controller.PersonController.BASE_URL;
 
 @RestController
 @RequestMapping(BASE_URL)
 @Slf4j
-public class PersonController implements PersonManagementController {
+public class PersonController implements PersonManagementController, Flow.Subscriber<SseEmitter.SseEventBuilder> {
     static final String BASE_URL = "/api/v1/person";
 
     private final PersonManagementService personManagementService;
     private final Validator validator;
+    private final SseEmitter sseEmitter;
+    private Flow.Subscription subscription;
 
     public PersonController(PersonManagementService personManagementService,
                             Validator validator) {
         this.personManagementService = personManagementService;
         this.validator = validator;
+        this.sseEmitter = new SseEmitter(Long.MAX_VALUE);
     }
 
     @Override
@@ -80,5 +86,36 @@ public class PersonController implements PersonManagementController {
                 .findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @GetMapping("/stream")
+    public SseEmitter stream() {
+        return this.sseEmitter;
+    }
+
+    @Override
+    public void onSubscribe(Flow.Subscription subscription) {
+        this.subscription = subscription;
+        subscription.request(1);
+    }
+
+    @Override
+    public void onNext(SseEmitter.SseEventBuilder item) {
+        try {
+            this.sseEmitter.send(item);
+        } catch (IOException e) {
+            log.error(e.getLocalizedMessage());
+        }
+        subscription.request(1);
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        log.error(throwable.getLocalizedMessage());
+    }
+
+    @Override
+    public void onComplete() {
+        this.sseEmitter.complete();
     }
 }

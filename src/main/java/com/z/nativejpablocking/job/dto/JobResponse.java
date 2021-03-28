@@ -1,16 +1,14 @@
-package com.z.nativejpablocking.person.dto;
+package com.z.nativejpablocking.job.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.z.nativejpablocking.person.domain.Job;
+import com.z.nativejpablocking.job.domain.Job;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 
-import static com.z.nativejpablocking.utils.DateUtils.DEFAULT_DATE_TIME_FORMAT;
+import static com.z.nativejpablocking.utils.date.DateUtils.DEFAULT_DATE_TIME_FORMAT;
 
 @RequiredArgsConstructor
 @Getter

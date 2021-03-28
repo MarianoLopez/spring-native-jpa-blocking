@@ -1,5 +1,6 @@
 package com.z.nativejpablocking.person.dto;
 
+import com.z.nativejpablocking.job.dto.JobRequest;
 import com.z.nativejpablocking.person.dto.validation.PersonIdGroup;
 import com.z.nativejpablocking.person.dto.validation.UpdatePersonGroup;
 import com.z.nativejpablocking.utils.validator.NotEmptyIfNotNull;

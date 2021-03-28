@@ -1,4 +1,4 @@
-package com.z.nativejpablocking.person.dto;
+package com.z.nativejpablocking.job.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
