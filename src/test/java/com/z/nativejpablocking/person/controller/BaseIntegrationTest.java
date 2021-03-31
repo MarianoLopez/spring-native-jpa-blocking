@@ -2,7 +2,6 @@ package com.z.nativejpablocking.person.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.z.nativejpablocking.person.dao.PersonDAO;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -24,12 +23,10 @@ import org.springframework.web.context.WebApplicationContext;
 public class BaseIntegrationTest {
     protected ObjectMapper mapper;
     protected MockMvc webTestClient;
-    protected PersonDAO personDAO;
 
     @BeforeAll
-    void setup(@Autowired WebApplicationContext context, @Autowired ObjectMapper mapper, @Autowired PersonDAO personDAO) {
+    void setup(@Autowired WebApplicationContext context, @Autowired ObjectMapper mapper) {
         this.mapper = mapper;
-        this.personDAO = personDAO;
         this.webTestClient = MockMvcBuilders
                 .webAppContextSetup(context)
                 .alwaysDo(MockMvcResultHandlers.print())

@@ -2,6 +2,7 @@ package com.z.nativejpablocking.error.controller;
 
 import com.z.nativejpablocking.error.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,7 +28,7 @@ public class ErrorHandlingController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.from(exception));
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, EntityNotFoundException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, EntityNotFoundException.class, PropertyReferenceException.class})
     ResponseEntity<ErrorResponse> httpMessageNotReadableExceptionHandler(Exception exception) {
         logError(exception);
         return ResponseEntity.badRequest().body(ErrorResponse.from(exception));
