@@ -24,4 +24,12 @@ public class MockHttpUtils {
                 .content(content);
     }
 
+    @SneakyThrows
+    public static MockHttpServletRequestBuilder put(String url, byte[] content) {
+        return MockMvcRequestBuilders
+                .put(new URI(url))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+    }
+
 }

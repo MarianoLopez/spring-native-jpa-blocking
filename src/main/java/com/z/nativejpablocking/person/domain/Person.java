@@ -43,7 +43,7 @@ public class Person extends JPAAuditor {
     @NotNull
     private Boolean enabled;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumns({
             @JoinColumn(name="country_iso_code", referencedColumnName="country_iso_code"),
             @JoinColumn(name="city_name", referencedColumnName="name")

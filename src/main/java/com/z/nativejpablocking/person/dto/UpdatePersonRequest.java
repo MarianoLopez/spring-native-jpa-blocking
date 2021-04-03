@@ -5,6 +5,7 @@ import com.z.nativejpablocking.person.dto.validation.PersonIdGroup;
 import com.z.nativejpablocking.person.dto.validation.UpdatePersonGroup;
 import com.z.nativejpablocking.utils.validator.NotEmptyIfNotNull;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Data
+@Builder
 public class UpdatePersonRequest {
 
     @ApiModelProperty(example = "999")

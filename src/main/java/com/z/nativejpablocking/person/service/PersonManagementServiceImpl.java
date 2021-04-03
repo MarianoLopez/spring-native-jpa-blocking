@@ -2,6 +2,8 @@ package com.z.nativejpablocking.person.service;
 
 import com.z.nativejpablocking.person.dao.PersonDAO;
 import com.z.nativejpablocking.job.domain.Job;
+import com.z.nativejpablocking.person.domain.City;
+import com.z.nativejpablocking.person.domain.CityId;
 import com.z.nativejpablocking.person.domain.Person;
 import com.z.nativejpablocking.person.dto.CreatePersonRequest;
 import com.z.nativejpablocking.person.dto.GetPersonRequest;
@@ -92,6 +94,14 @@ public class PersonManagementServiceImpl implements PersonManagementService {
 
         if (updatePersonRequest.getLastName() != null) {
             person.setLastName(updatePersonRequest.getLastName());
+        }
+
+        if (updatePersonRequest.getCityName() != null) {
+            person.getCity().getId().setName(updatePersonRequest.getCityName());
+        }
+
+        if (updatePersonRequest.getCountryISOCode() != null) {
+            person.getCity().getId().setCountryIsoCode(updatePersonRequest.getCountryISOCode());
         }
 
         person.setJobs(updatePersonRequest.getJobs().stream().map(Job::toJob).collect(Collectors.toSet()));
