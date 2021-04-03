@@ -2,6 +2,7 @@ package com.z.nativejpablocking.person.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.z.nativejpablocking.person.dto.PersonResponse;
 import com.z.nativejpablocking.person.dto.event.CreatePersonEvent;
 import com.z.nativejpablocking.person.dto.event.DeletePersonEvent;
 import com.z.nativejpablocking.person.dto.event.PersonEvent;
@@ -52,10 +53,12 @@ public class PersonEventListener {
         this.publisher.submit(this.buildSseEvent(personEvent));
     }
 
+    @SneakyThrows
     private SseEmitter.SseEventBuilder buildSseEvent(PersonEvent personEvent) {
+        var json = objectMapper.writeValueAsString(PersonResponse.from(personEvent.getPerson()));
         return SseEmitter
                 .event()
-                .data(personEvent.getPerson(), MediaType.APPLICATION_JSON)
+                .data(json, MediaType.TEXT_EVENT_STREAM)
                 .id(UUID.randomUUID().toString())
                 .name(personEvent.getClass().getSimpleName());
     }

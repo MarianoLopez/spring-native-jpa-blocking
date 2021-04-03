@@ -2,6 +2,7 @@ package com.z.nativejpablocking.person.dto;
 
 import com.z.nativejpablocking.job.dto.JobRequest;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Data
+@Builder
 public class CreatePersonRequest {
     @ApiModelProperty(example = "John")
     @NotEmpty

@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
@@ -54,6 +55,11 @@ public class ErrorHandlingController {
                         .payload(groupByError(exception))
                         .build()
         );
+    }
+
+    @ExceptionHandler(AsyncRequestTimeoutException.class)
+    void asyncTimeoutException(AsyncRequestTimeoutException asyncRequestTimeoutException) {
+        log.debug(asyncRequestTimeoutException.getLocalizedMessage());
     }
 
     private Map<String, List<FieldError>> groupByError(ConstraintViolationException exception) {

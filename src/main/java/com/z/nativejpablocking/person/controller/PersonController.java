@@ -7,9 +7,11 @@ import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
 import com.z.nativejpablocking.person.dto.validation.PersonIdGroup;
 import com.z.nativejpablocking.person.dto.validation.UpdatePersonGroup;
 import com.z.nativejpablocking.person.service.PersonManagementService;
+import com.z.nativejpablocking.person.service.SseEmitterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,29 +21,28 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
-import java.util.concurrent.Flow;
 
 import static com.z.nativejpablocking.person.controller.PersonController.BASE_URL;
 
 @RestController
 @RequestMapping(BASE_URL)
 @Slf4j
-public class PersonController implements PersonManagementController, Flow.Subscriber<SseEmitter.SseEventBuilder> {
+public class PersonController implements PersonManagementController {
     static final String BASE_URL = "/api/v1/person";
 
     private final PersonManagementService personManagementService;
     private final Validator validator;
-    private final SseEmitter sseEmitter;
-    private Flow.Subscription subscription;
+    private final SseEmitterService sseEmitterService;
+
 
     public PersonController(PersonManagementService personManagementService,
-                            Validator validator) {
+                            Validator validator,
+                            SseEmitterService sseEmitterService) {
         this.personManagementService = personManagementService;
         this.validator = validator;
-        this.sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        this.sseEmitterService = sseEmitterService;
     }
 
     @Override
@@ -88,34 +89,8 @@ public class PersonController implements PersonManagementController, Flow.Subscr
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    @GetMapping("/stream")
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream() {
-        return this.sseEmitter;
-    }
-
-    @Override
-    public void onSubscribe(Flow.Subscription subscription) {
-        this.subscription = subscription;
-        subscription.request(1);
-    }
-
-    @Override
-    public void onNext(SseEmitter.SseEventBuilder item) {
-        try {
-            this.sseEmitter.send(item);
-        } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-        }
-        subscription.request(1);
-    }
-
-    @Override
-    public void onError(Throwable throwable) {
-        log.error(throwable.getLocalizedMessage());
-    }
-
-    @Override
-    public void onComplete() {
-        this.sseEmitter.complete();
+        return this.sseEmitterService.createEmitter();
     }
 }
