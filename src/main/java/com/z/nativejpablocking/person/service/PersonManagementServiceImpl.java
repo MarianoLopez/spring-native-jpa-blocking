@@ -1,9 +1,7 @@
 package com.z.nativejpablocking.person.service;
 
-import com.z.nativejpablocking.person.dao.PersonDAO;
 import com.z.nativejpablocking.job.domain.Job;
-import com.z.nativejpablocking.person.domain.City;
-import com.z.nativejpablocking.person.domain.CityId;
+import com.z.nativejpablocking.person.dao.PersonDAO;
 import com.z.nativejpablocking.person.domain.Person;
 import com.z.nativejpablocking.person.dto.CreatePersonRequest;
 import com.z.nativejpablocking.person.dto.GetPersonRequest;
@@ -76,6 +74,7 @@ public class PersonManagementServiceImpl implements PersonManagementService {
     public PersonResponse deleteById(Long id) throws EntityNotFoundException {
         var person = findByIdOrElseThrow(id);
         person.setEnabled(false);
+        person.setLastModifiedDate(LocalDateTime.now());
         this.personDAO.save(person);
         this.applicationEventPublisher.publishEvent(new DeletePersonEvent(this, person));
         return PersonResponse.from(person);

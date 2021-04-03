@@ -74,15 +74,15 @@ class PersonControllerTest extends BaseIntegrationTest {
         @ParameterizedTest
         @DisplayName("Get Person by ID")
         @ValueSource(longs = {1L, 2L, 3L})
-        void findById(Long userId) throws Exception {
+        void findById(Long personId) throws Exception {
             var result = mockMvc
-                    .perform(MockHttpUtils.get(PERSON_BASE_URL + "/" + userId))
+                    .perform(MockHttpUtils.get(PERSON_BASE_URL + "/" + personId))
                     .andExpect(status().isOk())
                     .andReturn();
 
             var personResponse = map(result, PersonResponse.class);
             commonPersonResponseAssertions(personResponse);
-            assertThat(personResponse.getId(), is(userId));
+            assertThat(personResponse.getId(), is(personId));
         }
 
         @ParameterizedTest
@@ -191,6 +191,43 @@ class PersonControllerTest extends BaseIntegrationTest {
         void updateWithInvalidRequest(UpdatePersonRequest updatePersonRequest) throws Exception {
             mockMvc
                     .perform(MockHttpUtils.put(PERSON_BASE_URL, asByteArray(updatePersonRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @DisplayName("DELETE Person")
+    @Nested
+    class DeletePerson {
+        @ParameterizedTest
+        @DisplayName("Delete Person by ID")
+        @ValueSource(longs = {1L, 2L, 3L})
+        void deleteById(Long personId) throws Exception {
+            var now = LocalDateTime.now();
+
+            var sseMvcResult = getSseMvcResult();
+            var result = mockMvc
+                    .perform(MockHttpUtils.delete(PERSON_BASE_URL + "/" + personId))
+                    .andExpect(status().isAccepted())
+                    .andReturn();
+
+            var personResponse = map(result, PersonResponse.class);
+            commonPersonResponseAssertions(personResponse);
+            assertThat(personResponse.getId(), is(personId));
+            assertThat(personResponse.getEnabled(), is(false));
+            assertThat(personResponse.getLastModifiedDate(), greaterThanOrEqualTo(now));
+
+            personStreamAssertions(
+                    asyncDispatch(sseMvcResult),
+                    result.getResponse().getContentAsString(),
+                    "DeletePersonEvent");
+        }
+
+        @ParameterizedTest
+        @DisplayName("Delete Person With Invalid ID")
+        @ValueSource(longs = {-1L, 0L, 9999L})
+        void deleteWithInvalidId(Long personId) throws Exception {
+            mockMvc
+                    .perform(MockHttpUtils.delete(PERSON_BASE_URL + "/" + personId))
                     .andExpect(status().isBadRequest());
         }
     }

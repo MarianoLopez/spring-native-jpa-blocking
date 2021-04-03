@@ -32,4 +32,9 @@ public class MockHttpUtils {
                 .content(content);
     }
 
+    public static MockHttpServletRequestBuilder delete(String url) {
+        return MockMvcRequestBuilders.delete(url)
+                .contentType(MediaType.APPLICATION_JSON);
+    }
+
 }

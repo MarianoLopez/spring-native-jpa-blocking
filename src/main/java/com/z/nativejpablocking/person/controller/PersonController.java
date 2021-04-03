@@ -89,6 +89,7 @@ public class PersonController implements PersonManagementController {
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
+    @Override
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream() {
         return this.sseEmitterService.createEmitter();
