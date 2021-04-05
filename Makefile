@@ -8,8 +8,11 @@ install-dependencies:
 	gu install native-image
 
 build-native:
-	mvn -Pnative-image package
+	mvn -Pnative-image package -DskipTests
 
 run:
 	mvn spring-boot:run
+
+run-native:
+	./target/com.z.nativejpablocking.nativejpablockingapplication
 
