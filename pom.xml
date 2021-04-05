@@ -174,7 +174,11 @@
 						<configuration>
 							<!-- The native image build needs to know the entry point to your application -->
 							<mainClass>com.z.nativejpablocking.NativeJpaBlockingApplication</mainClass>
-							<buildArgs>-J-Xmx6G --verbose -H:+ReportExceptionStackTraces</buildArgs>
+							<buildArgs>
+								<arg>-J-Xmx6G</arg>
+								<arg>--verbose</arg>
+								<arg>-H:+ReportExceptionStackTraces</arg>
+							</buildArgs>
 						</configuration>
 						<executions>
 							<execution>

@@ -10,3 +10,6 @@ install-dependencies:
 build-native:
 	mvn -Pnative-image package
 
+run:
+	mvn spring-boot:run
+

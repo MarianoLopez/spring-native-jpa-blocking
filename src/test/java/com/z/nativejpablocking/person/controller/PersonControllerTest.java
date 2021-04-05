@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.z.nativejpablocking.person.dto.CreatePersonRequest;
 import com.z.nativejpablocking.person.dto.PersonResponse;
 import com.z.nativejpablocking.person.dto.UpdatePersonRequest;
+import com.z.nativejpablocking.utils.BaseIntegrationTest;
 import com.z.nativejpablocking.utils.MockHttpUtils;
 import com.z.nativejpablocking.utils.RestResponsePage;
 import org.junit.jupiter.api.DisplayName;

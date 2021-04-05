@@ -1,8 +1,7 @@
-package com.z.nativejpablocking.person.controller;
+package com.z.nativejpablocking.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.z.nativejpablocking.utils.RestResponsePage;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -63,12 +62,12 @@ public class BaseIntegrationTest {
         ));
     }
 
-    static int randomNumberBetween(int low, int high) {
+    public static int randomNumberBetween(int low, int high) {
         return r.nextInt(high - low) + low;
     }
 
     @SneakyThrows
-    ResultActions asyncDispatch(MvcResult result){
+    protected ResultActions asyncDispatch(MvcResult result) {
         MockAsyncContext ctx = (MockAsyncContext) result.getRequest().getAsyncContext();
         assert ctx != null;
         for (AsyncListener listener : ctx.getListeners()) {
@@ -79,22 +78,22 @@ public class BaseIntegrationTest {
     }
 
     @SneakyThrows
-    byte[] asByteArray(Object value) {
+    protected byte[] asByteArray(Object value) {
         return mapper.writeValueAsBytes(value);
     }
 
     @SneakyThrows
-    <T> T map(MvcResult result, Class<T> classValue) {
+    protected <T> T map(MvcResult result, Class<T> classValue) {
         return mapper.readValue(result.getResponse().getContentAsByteArray(), classValue);
     }
 
     @SneakyThrows
-    <T> List<T> mapList(MvcResult result, TypeReference<List<T>> typeReference) {
+    protected <T> List<T> mapList(MvcResult result, TypeReference<List<T>> typeReference) {
         return mapper.readValue(result.getResponse().getContentAsByteArray(), typeReference);
     }
 
     @SneakyThrows
-    <T> RestResponsePage<T> mapPage(MvcResult result, TypeReference<RestResponsePage<T>> typeReference) {
+    protected <T> RestResponsePage<T> mapPage(MvcResult result, TypeReference<RestResponsePage<T>> typeReference) {
         return mapper.readValue(result.getResponse().getContentAsByteArray(), typeReference);
     }
 }

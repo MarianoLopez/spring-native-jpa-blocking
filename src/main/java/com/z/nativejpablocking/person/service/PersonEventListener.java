@@ -3,12 +3,10 @@ package com.z.nativejpablocking.person.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.z.nativejpablocking.person.dto.PersonResponse;
-import com.z.nativejpablocking.person.dto.event.CreatePersonEvent;
-import com.z.nativejpablocking.person.dto.event.DeletePersonEvent;
 import com.z.nativejpablocking.person.dto.event.PersonEvent;
-import com.z.nativejpablocking.person.dto.event.UpdatePersonEvent;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationListener;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -20,7 +18,7 @@ import java.util.concurrent.SubmissionPublisher;
 
 @Component
 @Slf4j
-public class PersonEventListener {
+public class PersonEventListener implements ApplicationListener<PersonEvent> {
     private final ObjectMapper objectMapper;
     private final SubmissionPublisher<SseEmitter.SseEventBuilder> publisher;
 
@@ -29,24 +27,6 @@ public class PersonEventListener {
         this.objectMapper = objectMapper;
         this.publisher = new SubmissionPublisher<>();
         publisher.subscribe(subscriber);
-    }
-
-    @TransactionalEventListener
-    public void onCreatePerson(CreatePersonEvent createPersonEvent) {
-        logEvent(createPersonEvent);
-        publishEvent(createPersonEvent);
-    }
-
-    @TransactionalEventListener
-    public void onUpdatePerson(UpdatePersonEvent updatePersonEvent) {
-        logEvent(updatePersonEvent);
-        publishEvent(updatePersonEvent);
-    }
-
-    @TransactionalEventListener
-    public void onDeletePerson(DeletePersonEvent deletePersonEvent) {
-        logEvent(deletePersonEvent);
-        publishEvent(deletePersonEvent);
     }
 
     private void publishEvent(PersonEvent personEvent) {
@@ -72,4 +52,10 @@ public class PersonEventListener {
         log.debug(node.toString());
     }
 
+    @TransactionalEventListener
+    @Override
+    public void onApplicationEvent(PersonEvent personEvent) {
+        logEvent(personEvent);
+        publishEvent(personEvent);
+    }
 }

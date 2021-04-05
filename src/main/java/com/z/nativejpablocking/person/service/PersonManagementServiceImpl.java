@@ -11,21 +11,30 @@ import com.z.nativejpablocking.person.dto.event.CreatePersonEvent;
 import com.z.nativejpablocking.person.dto.event.DeletePersonEvent;
 import com.z.nativejpablocking.person.dto.event.UpdatePersonEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PersonManagementServiceImpl implements PersonManagementService {
+@Slf4j
+public class PersonManagementServiceImpl implements PersonManagementService, SseEmitterService {
+    private final Set<SseEmitter> sseEmitters = ConcurrentHashMap.newKeySet();
+    private Flow.Subscription subscription;
     private final PersonDAO personDAO;
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -108,5 +117,44 @@ public class PersonManagementServiceImpl implements PersonManagementService {
 
     private EntityNotFoundException entityNotFoundException(Long id) {
         return new EntityNotFoundException(String.format("Entity [%d] not found", id));
+    }
+
+    @Override
+    public SseEmitter createEmitter() {
+        final SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+
+        sseEmitter.onCompletion(() -> this.sseEmitters.remove(sseEmitter));
+        sseEmitter.onTimeout(sseEmitter::complete);
+        sseEmitters.add(sseEmitter);
+
+        return sseEmitter;
+    }
+
+    @Override
+    public void onSubscribe(Flow.Subscription subscription) {
+        this.subscription = subscription;
+        this.subscription.request(1);
+    }
+
+    @Override
+    public void onNext(SseEmitter.SseEventBuilder item) {
+        this.sseEmitters.forEach(sseEmitter -> {
+            try {
+                sseEmitter.send(item);
+            } catch (IOException e) {
+                log.error(e.getLocalizedMessage());
+            }
+        });
+        subscription.request(1);
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        log.error(throwable.getLocalizedMessage());
+    }
+
+    @Override
+    public void onComplete() {
+        this.sseEmitters.forEach(SseEmitter::complete);
     }
 }
