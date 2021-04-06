@@ -19,3 +19,6 @@ run-native:
 run-tests:
 	mvn test -f pom.xml
 
+run-tests-with-report:
+	mvn surefire-report:report
+

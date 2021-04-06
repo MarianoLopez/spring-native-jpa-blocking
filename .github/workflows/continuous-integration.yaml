@@ -25,9 +25,14 @@ jobs:
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: Execute all Unit & Integration Tests
-        run: make run-tests
+        run: make run-tests-with-report
+
+      - name: Publish Test Report
+          if: ${{ always() }}
+          uses: scacap/action-surefire-report@v1

@@ -1,4 +1,6 @@
 # Native JPA blocking example
+![](https://github.com/MarianoLopez/spring-native-jpa-blocking/workflows/Continuous%20Integration/badge.svg)
+
 This is a [Person-Rest-API](http://localhost:8081/swagger-ui/index.html) example that provides:
 * `GET /api/v1/person`: find all person with pagination & sorting
 * `GET /api/v1/person/{id}`: find person by id
