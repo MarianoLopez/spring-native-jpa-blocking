@@ -30,4 +30,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Execute all Unit & Integration Tests
-        run: mvn -B test --file pom.xml
+        run: make run-tests

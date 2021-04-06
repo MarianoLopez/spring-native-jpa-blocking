@@ -66,6 +66,10 @@ public class BaseIntegrationTest {
         return r.nextInt(high - low) + low;
     }
 
+    public static boolean isRunningInGithubActions() {
+        var actions = System.getenv("GITHUB_ACTIONS");
+        return Boolean.parseBoolean(actions);
+    }
     @SneakyThrows
     protected ResultActions asyncDispatch(MvcResult result) {
         MockAsyncContext ctx = (MockAsyncContext) result.getRequest().getAsyncContext();
