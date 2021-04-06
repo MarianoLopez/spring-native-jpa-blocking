@@ -1,6 +1,12 @@
 name: Continuous Integration
 
-on: pull_request
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [ published ]
+  pull_request:
 
 jobs:
   build:
