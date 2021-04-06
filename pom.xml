@@ -138,6 +138,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<removeSpelSupport>true</removeSpelSupport>
+					<removeJmxSupport>true</removeJmxSupport>
+					<removeUnusedConfig>true</removeUnusedConfig>
+					<removeXmlSupport>true</removeXmlSupport>
+					<removeYamlSupport>true</removeYamlSupport>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.hibernate.orm.tooling</groupId>

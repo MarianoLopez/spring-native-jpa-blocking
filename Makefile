@@ -16,3 +16,6 @@ run:
 run-native:
 	./target/com.z.nativejpablocking.nativejpablockingapplication
 
+run-tests:
+	mvn test -f pom.xml
+

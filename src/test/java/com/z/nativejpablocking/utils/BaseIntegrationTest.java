@@ -51,14 +51,14 @@ public class BaseIntegrationTest {
     private static Map<String, List<String>> initCitiesByCountry() {
         return Map.of(DEFAULT_COUNTRY, List.of(
                 "Capital Federal", "Buenos Aires",
-                "Catamarca", "Córdoba", "Corrientes",
-                "Chaco", "Chubut", "Entre Ríos",
+                "Catamarca", "Cordoba", "Corrientes",
+                "Chaco", "Chubut", "Entre Rios",
                 "Formosa", "Jujuy", "La Pampa",
                 "La Rioja", "Mendoza", "Misiones",
-                "Neuquén", "Río Negro", "Salta",
+                "Neuquen", "Rio Negro", "Salta",
                 "San Juan", "San Luis", "Santa Cruz",
                 "Santa Fe", "Santiago del Estero",
-                "Tucumán", "Tierra del Fuego"
+                "Tucuman", "Tierra del Fuego"
         ));
     }
 
