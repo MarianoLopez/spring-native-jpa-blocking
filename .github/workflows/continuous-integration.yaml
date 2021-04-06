@@ -34,5 +34,5 @@ jobs:
         run: make run-tests-with-report
 
       - name: Publish Test Report
-          if: ${{ always() }}
-          uses: scacap/action-surefire-report@v1
+        if: ${{ always() }}
+        uses: scacap/action-surefire-report@v1
