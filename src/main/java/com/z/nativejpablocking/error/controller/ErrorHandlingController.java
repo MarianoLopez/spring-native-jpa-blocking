@@ -83,6 +83,6 @@ public class ErrorHandlingController {
 
     private void logError(Throwable throwable) {
         log.error(throwable.getLocalizedMessage());
-        log.error(this.getClass().getSimpleName(), throwable);
+        //log.error(this.getClass().getSimpleName(), throwable);
     }
 }
