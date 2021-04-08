@@ -37,11 +37,12 @@ jobs:
         uses: scacap/action-surefire-report@v1
 
       - name: Build Artifact
-        run: make build
+        id: buildArtifact
+        run: |
+          make build
+          echo "::set-output name=file::$(ls target/*exec.jar)"
 
       - name: Upload Artifact
-        id: uploadArtifact
-        run: echo "::set-output name=file::$(ls target/*exec.jar)"
         uses: actions/upload-artifact@v2
         with:
-          path: ${{ steps.uploadArtifact.outputs.file }}
+          path: ${{ steps.buildArtifact.outputs.file }}
