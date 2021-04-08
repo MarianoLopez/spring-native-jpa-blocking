@@ -40,6 +40,8 @@ jobs:
         run: make build
 
       - name: Upload Artifact
+        id: uploadArtifact
+        run: echo "::set-output name=file::$(ls target/*exec.jar)"
         uses: actions/upload-artifact@v2
         with:
-          path: target/*exec.jar
+          path: ${{ steps.uploadArtifact.outputs.file }}
