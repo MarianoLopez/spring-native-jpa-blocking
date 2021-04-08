@@ -37,12 +37,10 @@ jobs:
         uses: scacap/action-surefire-report@v1
 
       - name: Build Artifact
-        id: buildArtifact
-        run: |
-          make build
-          echo "::set-output name=file::$(ls target/*exec.jar)"
+        run: make build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          path: ${{ steps.buildArtifact.outputs.file }}
+          name: person-jpa-blocking.zip
+          path: target/*exec.jar
