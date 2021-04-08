@@ -7,6 +7,9 @@ install-dependencies:
 	sdk install java 21.0.0.2.r11-grl
 	gu install native-image
 
+build:
+	mvn package -DskipTests
+
 build-native:
 	mvn -Pnative-image package -DskipTests
 

@@ -1,11 +1,6 @@
-name: Continuous Integration
+name: Unit & Integration Tests
 
-on:
-  push:
-    branches:
-      - main
-  release:
-    types: [ published ]
+on: pull_request
 
 jobs:
   build:
@@ -35,12 +30,3 @@ jobs:
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1
-
-      - name: Build Artifact
-        run: make build
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: person-jpa-blocking
-          path: target/*exec.jar
